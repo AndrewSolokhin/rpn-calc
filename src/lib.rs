@@ -1,14 +1,22 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
+#[derive(PartialEq, Debug)]
+struct StackMemory {
+    memory: Vec<f64>,
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+#[derive(PartialEq, Debug)]
+enum RpnOperator {
+    Add,
+    Sub,
+    Mul,
+    Div,
+}
+#[derive(PartialEq, Debug)]
+enum RpnElements {
+    Operator(RpnOperator),
+    Value(f64),
+}
+#[derive(PartialEq, Debug)]
+enum RpnError {
+    MissingOperand(String),
+    ParseError(String),
+    DivisionByZero(String),
 }
