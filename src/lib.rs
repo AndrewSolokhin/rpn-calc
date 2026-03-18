@@ -58,7 +58,7 @@ fn processing_elements(input: &str) -> Result<Vec<RpnElements>, RpnError> {
     Ok(stack)
 }
 
-fn calculate(input: Vec<RpnElements>) -> Result<f64, RpnError> {
+fn calculate(input: Vec<RpnElements>) -> Result<StackMemory, RpnError> {
     let mut stack: Vec<f64> = Vec::new();
 
     for element in input {
@@ -82,5 +82,9 @@ fn calculate(input: Vec<RpnElements>) -> Result<f64, RpnError> {
             }
         }
     }
-    stack.pop().ok_or(ParseError)
+    if stack.len() != 1 {
+        Err(ParseError)
+    } else {
+        Ok(StackMemory { memory: stack })
+    }
 }
