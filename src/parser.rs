@@ -1,26 +1,26 @@
 use crate::types::{RpnElements, RpnError, RpnOperator};
 
-pub fn processing_data(input: &str) -> Result<Vec<String>, RpnError> {
-    let mut stack: Vec<String> = Vec::new();
+pub fn processing_data(input: &str) -> Result<Vec<&str>, RpnError> {
+    let mut stack: Vec<&str> = Vec::new();
 
     for element in input.split_whitespace() {
-        stack.push(element.to_string());
+        stack.push(element);
     }
 
     if stack.is_empty() {
-        return Err(RpnError::ParseError);
+        return Err(RpnError::EmptyValue);
     }
     Ok(stack)
 }
 
-pub fn processing_elements(input: &str) -> Result<Vec<RpnElements>, RpnError> {
+pub fn processing_elements(input: Vec<&str>) -> Result<Vec<RpnElements>, RpnError> {
     let mut stack: Vec<RpnElements> = Vec::new();
 
-    for element in input.split_whitespace() {
+    for element in input.iter() {
         if let Ok(i) = element.parse::<f64>() {
             stack.push(RpnElements::Value(i));
         } else {
-            match element {
+            match *element {
                 "+" => stack.push(RpnElements::Operator(RpnOperator::Add)),
                 "-" => stack.push(RpnElements::Operator(RpnOperator::Sub)),
                 "*" => stack.push(RpnElements::Operator(RpnOperator::Mul)),
@@ -31,7 +31,41 @@ pub fn processing_elements(input: &str) -> Result<Vec<RpnElements>, RpnError> {
     }
 
     if stack.is_empty() {
-        return Err(RpnError::ParseError);
+        return Err(RpnError::EmptyValue);
     }
     Ok(stack)
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_processing_data_err_empty() {
+        let result = processing_data("");
+        assert!(result.is_err());
+    }
+    #[test]
+    fn test_processing_data_ok() {
+        let result = processing_data("32 52 +");
+        assert!(result.is_ok());
+    }
+    #[test]
+    fn test_processing_elements_err_empty() {
+        let result = processing_elements(vec![]);
+        assert!(result.is_err());
+    }
+    #[test]
+    fn test_processing_elements_err_extra_value() {
+        let result = processing_elements(vec!["32", "_", "52", "+"]);
+        assert!(result.is_err());
+    }
+    #[test]
+    fn test_processing_elements_ok_value() {
+        let result = processing_elements(vec!["32", "52", "+", "2", "+"]);
+        assert!(result.is_ok());
+    }
+    #[test]
+    fn test_processing_elements_ok_operator() {
+        let result = processing_elements(vec!["+", "-", "*", "/"]);
+        assert!(result.is_ok());
+    }
 }
