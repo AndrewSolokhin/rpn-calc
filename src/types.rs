@@ -3,7 +3,7 @@ pub struct StackMemory {
     pub memory: Vec<f64>,
 }
 #[derive(PartialEq, Debug)]
-pub(crate) enum RpnOperator {
+pub enum RpnOperator {
     Add,
     Sub,
     Mul,
