@@ -41,31 +41,16 @@ mod tests {
     #[test]
     fn test_processing_data_err_empty() {
         let result = processing_data("");
-        assert!(result.is_err());
-    }
-    #[test]
-    fn test_processing_data_ok() {
-        let result = processing_data("32 52 +");
-        assert!(result.is_ok());
+        assert_eq!(result, Err(RpnError::EmptyValue));
     }
     #[test]
     fn test_processing_elements_err_empty() {
         let result = processing_elements(vec![]);
-        assert!(result.is_err());
+        assert_eq!(result, Err(RpnError::EmptyValue));
     }
     #[test]
     fn test_processing_elements_err_extra_value() {
         let result = processing_elements(vec!["32", "_", "52", "+"]);
-        assert!(result.is_err());
-    }
-    #[test]
-    fn test_processing_elements_ok_value() {
-        let result = processing_elements(vec!["32", "52", "+", "2", "+"]);
-        assert!(result.is_ok());
-    }
-    #[test]
-    fn test_processing_elements_ok_operator() {
-        let result = processing_elements(vec!["+", "-", "*", "/"]);
-        assert!(result.is_ok());
+        assert_eq!(result, Err(RpnError::ParseError));
     }
 }

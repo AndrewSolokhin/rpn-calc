@@ -31,3 +31,31 @@ pub fn calculate(input: Vec<RpnElements>) -> Result<StackMemory, RpnError> {
         Ok(StackMemory { memory: stack })
     }
 }
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::RpnOperator::Div;
+    #[test]
+    fn test_calculate_div_zero() {
+        let result = calculate(vec![
+            RpnElements::Value(10.0),
+            RpnElements::Value(0.0),
+            RpnElements::Operator(Div),
+        ]);
+        assert_eq!(result, Err(RpnError::DivisionByZero));
+    }
+    #[test]
+    fn test_calculate_div_negative() {
+        let result = calculate(vec![
+            RpnElements::Value(-91.0),
+            RpnElements::Value(20.0),
+            RpnElements::Operator(Div),
+        ]);
+        assert_eq!(
+            result,
+            Ok(StackMemory {
+                memory: vec![-4.55]
+            })
+        );
+    }
+}
